@@ -63,6 +63,45 @@
 #define SOLUTION_STACKMAT_2 { }
 #endif
 
+void sum_vector(int* a, int* b, int* c) {
+    for (int i=0; i<LEN; i++)
+        c[i] = a[i] + b[i];
+}
+
+int* sum_vector2(int* a, int* b) {
+    int* c = (int*)malloc(LEN * sizeof(int));
+    for (int i=0; i<LEN; i++)
+        c[i] = a[i] + b[i];
+    return c;
+}
+
+int* sum_vector3(int* a, int* b) {
+    static int c[LEN];
+    for (int i=0; i<LEN; i++)
+        c[i] = a[i] + b[i];
+    return c;
+}
+
+int* sum_matrix(int* A, int* B, int* C) {
+    for (int i=0; i<N*M; i++)
+        C[i] = A[i] + B[i];
+    return C;
+}
+
+int* sum_matrix2(int* A, int* B) {
+    int* C = (int*)malloc(N*M * sizeof(int));
+    for (int i=0; i<N*M; i++)
+        C[i] = A[i] + B[i];
+    return C;
+}
+
+int* sum_matrix3(int* A, int* B) {
+    static int C[N*M];
+    for (int i=0; i<N*M; i++)
+        C[i] = A[i] + B[i];
+    return C;
+}
+
 int main(void) {
     // ---------- for timing ----------
     float CPU_times[NPROBS];
@@ -89,7 +128,19 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
 
+    int a[LEN], b[LEN], c[LEN];
+    for (int i=0; i<LEN; i++)
+        a[i] = i;
+    for (int i=0; i<LEN; i++)
+        b[i] = 100 * i;
+    for (int i=0; i<LEN; i++)
+        c[i] = a[i] + b[i];
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[0] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.0;
+    PRINT_RESULT_VECTOR(c, "c");
 
 #endif
     // ---------------------- Heap vectors 1 -----------------------
@@ -103,6 +154,16 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    
+    gettimeofday(&temp_1, NULL);
+
+    int* c1 = (int*)malloc(LEN * sizeof(int));
+    sum_vector(a, b, c1);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[1] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_VECTOR(c1, "c1");
+    free(c1);
 
 
 #endif
@@ -117,7 +178,14 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
 
+    int* c2 = sum_vector2(a, b);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[2] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_VECTOR(c2, "c2");
+    free(c2);
 
 #endif
     // ---------------------- Stack vectors 2 ----------------------
@@ -130,7 +198,13 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
 
+    int* c3 = sum_vector3(a, b);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[3] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_VECTOR(c3, "c3");
 
 #endif
 
@@ -152,6 +226,19 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
+
+    int A[N][M], B[N][M], C[N][M];
+    for (int i=0; i<N*M; i++)
+        ((int*) A)[i] = i;
+    for (int i=0; i<N*M; i++)
+        ((int*) B)[i] = (i) * 100;
+    for (int i=0; i<N*M; i++)
+        ((int*) C)[i] = ((int*) A)[i] + ((int*) B)[i];
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[4] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_MATRIX(((int*)C), "C");
 
 
 #endif
@@ -164,6 +251,15 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
+
+    int* C1 = (int*)malloc(N*M * sizeof(int));
+    sum_matrix((int*)A, (int*)B, C1);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[5] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_MATRIX(C1, "C1");
+    free(C1);
 
 
 #endif
@@ -177,6 +273,14 @@ int main(void) {
         /* |           Put here your code           | */
         /* |========================================| */
 
+    gettimeofday(&temp_1, NULL);
+
+    int* C2 = sum_matrix2((int*)A, (int*)B);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[6] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_MATRIX(C2, "C2");
+    free(C2);
 
 #endif
 
@@ -187,7 +291,13 @@ int main(void) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    gettimeofday(&temp_1, NULL);
 
+    int* C3 = sum_matrix3((int*)A, (int*)B);
+
+    gettimeofday(&temp_2, NULL);
+    CPU_times[7] = ((temp_2.tv_sec - temp_1.tv_sec) + (temp_2.tv_usec - temp_1.tv_usec))/1000000.;
+    PRINT_RESULT_MATRIX(C3, "C3");
 
 #endif
 
