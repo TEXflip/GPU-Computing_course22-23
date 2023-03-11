@@ -7,6 +7,9 @@
 
 // Put here the declaration of mu_fn and sigma_fn
 
+float mean(int *v, int n);
+
+float variance(int *v, float mean, int n);
 
 // ----------------------------------------------
 

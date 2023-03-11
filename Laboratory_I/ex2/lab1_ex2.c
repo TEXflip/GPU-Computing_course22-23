@@ -53,8 +53,25 @@ int main(int argc, char *argv[]) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    clock_t t1, t2;
+    t1 = clock();
 
+    a = (int*)malloc(n*sizeof(int));
+    b = (int*)malloc(n*sizeof(int));
+    c = (int*)malloc(n*sizeof(int));
+    for (size_t i = 0; i < n; i++)
+        a[i] = rand()/(1<<11);
+    for (size_t i = 0; i < n; i++)
+        b[i] = rand()/(1<<11);
+    for (size_t i = 0; i < n; i++)
+        c[i] = a[i] + b[i];
+    t2 = clock();
+    free(a);
+    free(b);
+    free(c);
 
+    double t = (double)(t2 - t1) / CLOCKS_PER_SEC;    
+    printf("Time: %f\n", t);
 
 #endif
 
@@ -77,6 +94,16 @@ int main(int argc, char *argv[]) {
         /* |========================================| */
         /* |           Put here your code           | */
         /* |========================================| */
+    t1 = clock();
+    mu_a = mean(a, n);
+    mu_b = mean(b, n);
+    mu_c = mean(c, n);
+    sigma_a = variance(a, mu_a, n);
+    sigma_b = variance(b, mu_b, n);
+    sigma_c = variance(c, mu_c, n);
+    t2 = clock();
+    t = (double)(t2 - t1) / CLOCKS_PER_SEC;
+    printf("Time: %f\n", t);
 
 #endif
 
