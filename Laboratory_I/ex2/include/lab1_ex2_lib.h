@@ -3,7 +3,7 @@
 
 #define STR(s) #s
 #define XSTR(s) STR(s)
-#define dtype int
+#define dtype double
 
 // Put here the declaration of mu_fn and sigma_fn
 

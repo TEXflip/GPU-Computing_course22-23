@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
 
     printf("n = %d\n", n);
     printf("dtype = %s\n", XSTR(dtype));
-    printf("%d\n", RAND_MAX);
 
     /* Generate now two vectors a and b of size (2^n) and fill them with random integers
      *  in the range [-(2^11), (2^11)]. After this, compute the vector sum c = a + b (for
@@ -60,10 +59,18 @@ int main(int argc, char *argv[]) {
     a = (dtype*)malloc(n*sizeof(dtype));
     b = (dtype*)malloc(n*sizeof(dtype));
     c = (dtype*)malloc(n*sizeof(dtype));
+    
+# if defined (dtype) && (dtype == int)
     for (size_t i = 0; i < n; i++)
         a[i] = (rand()>>19) - (1<<11);
     for (size_t i = 0; i < n; i++)
         b[i] = (rand()>>19) - (1<<11);
+# elif defined (dtype) && (dtype == double)
+    for (size_t i = 0; i < n; i++)
+        a[i] = (((double)rand()/(double)RAND_MAX)  - 0.5) * (1<<12);
+    for (size_t i = 0; i < n; i++)
+        b[i] = (((double)rand()/(double)RAND_MAX)  - 0.5) * (1<<12);
+#endif
     for (size_t i = 0; i < n; i++)
         c[i] = a[i] + b[i];
     t2 = clock();
