@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 
     printf("n = %d\n", n);
     printf("dtype = %s\n", XSTR(dtype));
+    printf("%d\n", RAND_MAX);
 
     /* Generate now two vectors a and b of size (2^n) and fill them with random integers
      *  in the range [-(2^11), (2^11)]. After this, compute the vector sum c = a + b (for
@@ -56,19 +57,16 @@ int main(int argc, char *argv[]) {
     clock_t t1, t2;
     t1 = clock();
 
-    a = (int*)malloc(n*sizeof(int));
-    b = (int*)malloc(n*sizeof(int));
-    c = (int*)malloc(n*sizeof(int));
+    a = (dtype*)malloc(n*sizeof(dtype));
+    b = (dtype*)malloc(n*sizeof(dtype));
+    c = (dtype*)malloc(n*sizeof(dtype));
     for (size_t i = 0; i < n; i++)
-        a[i] = rand()/(1<<11);
+        a[i] = (rand()>>19) - (1<<11);
     for (size_t i = 0; i < n; i++)
-        b[i] = rand()/(1<<11);
+        b[i] = (rand()>>19) - (1<<11);
     for (size_t i = 0; i < n; i++)
         c[i] = a[i] + b[i];
     t2 = clock();
-    free(a);
-    free(b);
-    free(c);
 
     double t = (double)(t2 - t1) / CLOCKS_PER_SEC;    
     printf("Time: %f\n", t);

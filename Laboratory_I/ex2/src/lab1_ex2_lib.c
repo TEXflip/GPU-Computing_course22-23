@@ -3,17 +3,17 @@
 // Put here the implementation of mu_fn and sigma_fn
 
 
-float mean(int *v, int n){
-	float sum = 0;
+double mean(dtype *v, int n){
+	double sum = 0;
 	for (int i = 0; i < n; i++)
-		sum += v[i];
-	return sum/n;
+		sum += (double) v[i];
+	return sum / (double)n;
 }
 
-float variance(int *v, float mean, int n){
-	float sum = 0, mu_diff;
+double variance(dtype *v, double mean, int n){
+	double sum = 0, mu_diff;
 	for (int i = 0; i < n; i++){
-		mu_diff = (v[i] - mean);
+		mu_diff = (((double)v[i]) - mean);
 		sum += mu_diff*mu_diff;
 	}
 	return sum/n;
