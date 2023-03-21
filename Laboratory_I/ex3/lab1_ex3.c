@@ -171,6 +171,55 @@ void print_DN (vtype* A, int n, int m) {
     return;
 }
 
+vtype* densification(CSR* A) {
+    vtype* dn_A = (vtype*)malloc(sizeof(vtype)*(A->n)*(A->m));
+
+    for (int i=0; i<(A->n)*(A->m); i++)
+        dn_A[i] = 0.0;
+
+    
+    for (int i=0; i<A->n; i++)
+        for (int j=A->row[i]; j<A->row[i+1]; j++)
+            dn_A[i*(A->m) + A->col[j]] = A->val[j];
+
+    return dn_A;
+}
+
+CSR* sparsification(vtype* A, int n, int m) {
+    CSR* ck_A = (CSR*)malloc(sizeof(CSR));
+
+    ck_A->n = n;
+    ck_A->m = m;
+    ck_A->nnz = 0;
+    
+    for (int i=0; i<n*m; i++)
+        if (A[i] != 0.0)
+            ck_A->nnz++;
+    
+    ck_A->row = (itype*)malloc(sizeof(itype)*(ck_A->n + 1));
+    ck_A->col = (itype*)malloc(sizeof(itype)*(ck_A->nnz));
+    ck_A->val = (vtype*)malloc(sizeof(vtype)*(ck_A->nnz));
+
+    itype k = 0;
+    
+    for (itype i = 0; i < n; i++)
+    {
+        ck_A->row[i] = k;
+        for (itype j = 0; j < m; j++)
+        {
+            if (A[i*m + j] != 0.0)
+            {
+                ck_A->col[k] = j;
+                ck_A->val[k] = A[i*m + j];
+                k++;
+            }
+        }
+    }
+    ck_A->row[n] = k;
+    
+    return ck_A;
+}
+
 int main (int argc, char *argv[]) {
 
     if (argc < 3) {
@@ -196,8 +245,10 @@ int main (int argc, char *argv[]) {
         /* |           Put here your code           | */
         /* |========================================| */
 
-
-
+        dn_A = densification(A);
+        print_DN(dn_A, n, m);
+        ck_A = sparsification(dn_A, n, m);
+        print_CSR(ck_A, "ck_A");
 #endif
 
     int test = compare_CSR(A, ck_A);
