@@ -38,8 +38,11 @@ int main(int argc, char const *argv[])
 
 	int n = atoi(argv[1]);
 
+	n = 1 << n;
+
 	vtype* v = random_vector(n);
 	print_vector(v, n);
+	printf("\n\n");
 	vtype* p = prefix_sum(v, n);
 	print_vector(p, n);
 	return 0;
