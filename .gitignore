@@ -1,6 +1,9 @@
+# remove files without extensions but keeping makefiles
 *
 !*/
 !*.*
+!makefile
+
 .kdev4/*
 *.kdev4
 Laboratory_I/C_recap
