@@ -56,6 +56,40 @@ void example_kernel(int n, dtype *a, dtype* b, dtype* c)
             /* |         Put here your kernels          | */
             /* |========================================| */
 
+// __global__ dtype vec_add_kernel_1(int n, dtype* v) {
+//   int i = blockIdx.x * blockDim.x + threadIdx.x;
+//   while (n >= 2) {
+//     if (i < n>>1)
+//       v[i] = v[i] + v[i + n>>1];
+//     n = n>>1;
+//   }
+// }
+
+__global__ dtype vec_add_kernel_1(dtype* a, dtype* b, dtype* c, int n) {
+  int tid = blockIdx.x * blockDim.x + threadIdx.x;
+  int tot_th = gridDim.x * blockDim.x;
+  int values2th = ((n % tot_th) == 0) ? n/tot_th : n/tot_th + 1;
+  int coord;
+
+  for (int i=0; i<values2th; i++) {
+    coord = tid + i*tot_th;
+    if (coord < n)
+      c[coord] = a[coord] + b[coord];
+  }
+}
+
+__global__ dtype vec_add_kernel_2(dtype* a, dtype* b, dtype* c, int n) {
+  int tid = blockIdx.x * blockDim.x + threadIdx.x;
+  int tot_th = gridDim.x * blockDim.x;
+  int values2th = ((n % tot_th) == 0) ? n/tot_th : n/tot_th + 1;
+  int coord;
+
+  for (int i=0; i<values2th; i++) {
+    coord = tid + i*values2th;
+    if (coord < n)
+      c[coord] = a[coord] + b[coord];
+  }
+}
 
 
 
@@ -213,12 +247,14 @@ int main(int argc, char *argv[]) {
             /* |========================================| */
 
   // ------------ copy date from host to device --------------
-
-
+  cudaMemcpy(dev_a, a, len*sizeof(dtype), cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_b, b, len*sizeof(dtype), cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_c, GPU_c, len*sizeof(dtype), cudaMemcpyHostToDevice);
 
   // ------------ computation solution with Layout 1 -----------
   TIMER_START;
 
+  vec_add_kernel_1<<<GRD_SIZE, BLK_SIZE>>>(dev_a, dev_b, dev_c, len);
 
   checkCudaErrors( cudaDeviceSynchronize() );
   TIMER_STOP;
@@ -249,13 +285,16 @@ int main(int argc, char *argv[]) {
             /* |========================================| */
 
   // ---------------- Reset the memory in dev_c ----------------
+  cudaMemcpy(dev_a, a, len*sizeof(dtype), cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_b, b, len*sizeof(dtype), cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_c, GPU_c, len*sizeof(dtype), cudaMemcpyHostToDevice);
 
 
 
   // ------------ computation solution with Layout 2 -----------
   TIMER_START;
 
-
+  vec_add_kernel_2<<<GRD_SIZE, BLK_SIZE>>>(dev_a, dev_b, dev_c, len);
 
   checkCudaErrors( cudaDeviceSynchronize() );
   TIMER_STOP;
