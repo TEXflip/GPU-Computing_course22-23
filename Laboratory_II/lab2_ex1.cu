@@ -2,7 +2,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
-#include "../include/helper_cuda.h"
+#include "../cuda-samples/Common/helper_cuda.h"
 #include <cuda_runtime.h>
 
 #define NPROBS 3
